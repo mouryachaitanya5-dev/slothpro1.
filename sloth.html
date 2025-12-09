@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>3D Landing Page — Animated</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fonts: Jacques Francois, Manuale, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Jacques Francois and Manuale are available on Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&family=Manuale:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <!-- Navbar -->
+    <header class="nav">
+      <div class="nav__left">
+        <!-- Top-left logo uses Jacques Francois -->
+        <div class="nav__logo">YourLogo</div>
+        <nav class="nav__links">
+          <a href="#" class="nav__link">Features</a>
+          <a href="#" class="nav__link">Pricing</a>
+          <a href="#" class="nav__link">Resources</a>
+        </nav>
+      </div>
+      <div class="nav__right">
+        <!-- Top-right text / CTA uses Manuale -->
+        <a href="#" class="nav__link nav__link--muted">Log in</a>
+        <a href="#" class="nav__cta">Get Started</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <main class="hero">
+      <section class="hero__left">
+        <p class="hero__eyebrow anim-up" data-delay="0">AI powered dashboard</p>
+        <h1 class="hero__title anim-up" data-delay="100">
+          Design your <span class="hero__title-gradient">3D experience</span> in minutes.
+        </h1>
+        <p class="hero__subtitle anim-up" data-delay="200">
+          Turn your static UI into an interactive, depth-driven experience with smooth 3D cards,
+          gradients and modern glassmorphism styling.
+        </p>
+
+        <div class="hero__actions anim-up" data-delay="300">
+          <a href="#" class="btn btn--primary">Start for free</a>
+          <button class="btn btn--ghost">
+            Watch demo
+            <span class="btn__pill">3 min</span>
+          </button>
+        </div>
+
+        <div class="hero__meta anim-up" data-delay="380">
+          <div class="hero__meta-item">
+            <div class="hero__meta-label">Live in</div>
+            <div class="hero__meta-value">60 seconds</div>
+          </div>
+          <div class="hero__meta-item">
+            <div class="hero__meta-label">Trusted by</div>
+            <div class="hero__meta-value">2,500+ teams</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3D Card -->
+      <section class="hero__right">
+        <div class="card3d-wrapper" aria-hidden="true">
+          <div class="card3d-glow"></div>
+          <article class="card3d" data-tilt="true">
+            <header class="card3d__header">
+              <div>
+                <p class="card3d__label">Realtime analytics</p>
+                <h2 class="card3d__title">Engagement overview</h2>
+              </div>
+              <span class="card3d__badge">Live</span>
+            </header>
+
+            <div class="card3d__center">
+              <!-- Inter used for this metric -->
+              <p class="card3d__metric">+142%</p>
+              <p class="card3d__metric-sub">Interaction growth this week</p>
+
+              <div class="card3d__bar-row">
+                <div class="card3d__bar">
+                  <span style="width: 80%"></span>
+                </div>
+                <div class="card3d__bar card3d__bar--muted">
+                  <span style="width: 40%"></span>
+                </div>
+              </div>
+            </div>
+
+            <footer class="card3d__footer">
+              <div class="card3d__stat">
+                <p class="card3d__stat-label">Avg. session</p>
+                <p class="card3d__stat-value">4m 21s</p>
+              </div>
+              <div class="card3d__stat">
+                <p class="card3d__stat-label">Conversion</p>
+                <p class="card3d__stat-value">12.4%</p>
+              </div>
+              <div class="card3d__avatars">
+                <span class="card3d__avatar"></span>
+                <span class="card3d__avatar"></span>
+                <span class="card3d__avatar card3d__avatar--more">+9</span>
+              </div>
+            </footer>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+  /* ====== animation + tilt script ====== */
+  (function () {
+    // Entrance staggered animations (adds 'in' class with delay)
+    document.addEventListener('DOMContentLoaded', () => {
+      const anims = document.querySelectorAll('.anim-up');
+      anims.forEach(el => {
+        const delay = parseInt(el.dataset.delay || 0, 10);
+        setTimeout(() => el.classList.add('in'), delay);
+      });
+    });
+
+    // 3D tilt logic (mouse + touch)
+    const wrappers = document.querySelectorAll('.card3d-wrapper');
+
+    wrappers.forEach(wrapper => {
+      const card = wrapper.querySelector('[data-tilt="true"]');
+      const glow = wrapper.querySelector('.card3d-glow');
+
+      if (!card) return;
+
+      const strength = 18; // degrees
+      const zDepth = 30; // px
+
+      function handleMove(e) {
+        const rect = wrapper.getBoundingClientRect();
+        const x = (e.clientX ?? e.touches?.[0]?.clientX) - rect.left;
+        const y = (e.clientY ?? e.touches?.[0]?.clientY) - rect.top;
+        const px = (x / rect.width) - 0.5;
+        const py = (y / rect.height) - 0.5;
+
+        const rotateY = px * strength * -1;
+        const rotateX = py * strength;
+
+        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(${zDepth}px)`;
+        const gx = px * 40;
+        const gy = py * 40;
+        glow.style.transform = `translate3d(${gx}px, ${gy}px, -10px)`;
+        wrapper.classList.add('tilt-active');
+      }
+
+      function reset() {
+        card.style.transform = '';
+        glow.style.transform = '';
+        wrapper.classList.remove('tilt-active');
+      }
+
+      wrapper.addEventListener('mousemove', handleMove);
+      wrapper.addEventListener('mouseleave', reset);
+      wrapper.addEventListener('mouseenter', () => wrapper.classList.add('tilt-active'));
+
+      wrapper.addEventListener('touchstart', (ev) => { if (ev.touches && ev.touches.length) handleMove(ev.touches[0]); }, { passive: true });
+      wrapper.addEventListener('touchmove', (ev) => { if (ev.touches && ev.touches.length) handleMove(ev.touches[0]); }, { passive: true });
+      wrapper.addEventListener('touchend', reset);
+    });
+  })();
+  </script>
+</body>
+</html>
